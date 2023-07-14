@@ -15,16 +15,27 @@ import android.widget.TextView;
 
 import com.example.productos.Models.Articulos;
 import com.example.productos.Models.Marcas;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class ActivityListaProductos extends AppCompatActivity {
     ListView ListaProdu;
     Button volver2;
+    FloatingActionButton agregarP;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_productos);
         ListaProdu=findViewById(R.id.ListaProdu);
         volver2=findViewById(R.id.volver2);
+        agregarP=findViewById(R.id.agregarP);
+
+        agregarP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intento = new Intent(ActivityListaProductos.this,ActivityAgregarProducto.class);
+                startActivity(intento);
+            }
+        });
 
         volver2.setOnClickListener(new View.OnClickListener() {
             @Override
