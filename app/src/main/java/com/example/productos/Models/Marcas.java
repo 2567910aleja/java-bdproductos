@@ -100,6 +100,12 @@ public class Marcas {
 
     // Eliminar una marca
     public void eliminar(Context context) {
+        List<Articulos> listArticulos = Articulos.listarArticuloObj(context,"idMarca="+id,null);
+        if ((long)listArticulos.size()>0){
+            for (int i =0;i<(long) listArticulos.size();i++){
+                listArticulos.get(i).eliminar(context);
+            }
+        }
         String cadenaSql = "delete from marcas where id=" + id;
         BdOpenHelper.consultaSinRetorno(context, cadenaSql);
     }

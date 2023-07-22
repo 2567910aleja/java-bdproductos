@@ -98,8 +98,12 @@ public class Articulos {
         BdOpenHelper.consultaSinRetorno(context,cadenaSql);
     }
 
-    public static void modificar(Context contexto){
+    public void modificar(Context context){
         String cadenaSql="update articulos set nombre='"+ nombre + "',precio="+ precio +",idMarca="+ idMarca +" where id="+id;
-        BdOpenHelper.consultaSinRetorno(contexto, cadenaSql);
+        BdOpenHelper.consultaSinRetorno(context, cadenaSql);
+    }
+    public void eliminar(Context context){
+        String cadenaSql="delete from articulos where id="+id;
+        BdOpenHelper.consultaSinRetorno(context, cadenaSql);
     }
 }

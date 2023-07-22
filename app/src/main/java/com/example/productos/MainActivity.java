@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intento = new Intent(MainActivity.this,ActivityIngresarMarca.class);
+                intento.putExtra("accion","agregar");
                 startActivity(intento);
             }
 });
