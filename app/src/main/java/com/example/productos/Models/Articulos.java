@@ -11,10 +11,10 @@ public class Articulos {
     // ATRIBUTOS - PROPIEDADES - CARACTERISTICAS
     // Tipo nombreVariable; =Valor;
 
-    private int id;
-    private String nombre;
-    private double precio;
-    private int idMarca;
+    private static int id;
+    private static String nombre;
+    private static double precio;
+    private static int idMarca;
 
     //METODOS - FUNCIONES - ACCIONES
 
@@ -93,8 +93,13 @@ public class Articulos {
         }
         return articulosList;
     }
-    public static void crearMarca(Context context,String nombre,double precio, int idMarca){
+    public void crearArti(Context context){
         String cadenaSql="insert into articulos (nombre,precio,idMarca) values ('"+nombre+"',"+precio+","+idMarca+")";
         BdOpenHelper.consultaSinRetorno(context,cadenaSql);
+    }
+
+    public static void modificar(Context contexto){
+        String cadenaSql="update articulos set nombre='"+ nombre + "',precio="+ precio +",idMarca="+ idMarca +" where id="+id;
+        BdOpenHelper.consultaSinRetorno(contexto, cadenaSql);
     }
 }
