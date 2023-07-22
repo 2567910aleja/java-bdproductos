@@ -11,10 +11,10 @@ public class Articulos {
     // ATRIBUTOS - PROPIEDADES - CARACTERISTICAS
     // Tipo nombreVariable; =Valor;
 
-    private static int id;
-    private static String nombre;
-    private static double precio;
-    private static int idMarca;
+    private int id;
+    private String nombre;
+    private double precio;
+    private int idMarca;
 
     //METODOS - FUNCIONES - ACCIONES
 

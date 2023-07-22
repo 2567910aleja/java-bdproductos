@@ -2,12 +2,15 @@ package com.example.productos;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -16,6 +19,8 @@ import android.widget.TextView;
 import com.example.productos.Models.Articulos;
 import com.example.productos.Models.Marcas;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.List;
 
 public class ActivityListaProductos extends AppCompatActivity {
     ListView ListaProdu;
@@ -33,6 +38,7 @@ public class ActivityListaProductos extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intento = new Intent(ActivityListaProductos.this,ActivityAgregarProducto.class);
+                intento.putExtra("accion","agregar");
                 startActivity(intento);
             }
         });
@@ -45,34 +51,61 @@ public class ActivityListaProductos extends AppCompatActivity {
             }
         });
 
-        String [][] articulosBd= Articulos.listarArticulos(this,null, null);
-        String [] nombrearticulos=new String[articulosBd.length];
-        String [] nombreMarcas = new String[articulosBd.length];
-        String marca="";
-        String precio="";
-        for (int contador = 0; contador < nombrearticulos.length;contador++){
-            nombrearticulos[contador]=articulosBd[contador][1];
-            marca=Marcas.listarMarcas(this,"id ="+articulosBd[contador][3],null)[0][1];
-            precio=articulosBd[contador][2];
-            nombreMarcas[contador]=marca+" $"+precio;
-        }
+        List<Articulos> listArticulos = Articulos.listarArticuloObj(this,null,null);
 
-        ArrayAdapter<String> miAdaptador=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_2,android.R.id.text1,nombrearticulos){
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
-                View vista=super.getView(position, convertView, parent);
-                TextView text1 = vista.findViewById(android.R.id.text1);
-                TextView text2 = vista.findViewById(android.R.id.text2);
-
-                text1.setText(nombrearticulos[position]);
-                text2.setText(nombreMarcas[position]);
-                return vista;
-            }
-        };
+        ArrayAdapter<Articulos> miAdaptador=new ArrayAdapter<Articulos>(this, android.R.layout.simple_list_item_1,listArticulos);
 
         ListaProdu.setAdapter(miAdaptador);
+
+        //evento de la lista
+        ListaProdu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Aquí obtienes el producto seleccionado
+                Articulos articuloSeleccionado = (Articulos) parent.getItemAtPosition(position);
+
+                // Creas el AlertDialog
+                CharSequence[] opciones = new CharSequence[]{"Modificar", "Detalle", "Eliminar", "Cancelar"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(ActivityListaProductos.this);
+                builder.setTitle("Selecciona una opción");
+                builder.setItems(opciones,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // The 'which' argument contains the index position
+                                // of the selected item
+                                Intent intento;
+                                switch (which) {
+                                    case 0:
+                                        //Modificar
+                                        intento = new Intent(ActivityListaProductos.this,ActivityAgregarProducto.class);
+                                        intento.putExtra("accion","modificar");
+                                        intento.putExtra("idProdu",articuloSeleccionado.getId());
+                                        startActivity(intento);
+                                        break;
+                                    case 1:
+                                        // Detalle
+                                        intento = new Intent(ActivityListaProductos.this,ActivityDetalleArticulo.class);
+                                        intento.putExtra("idProdu",articuloSeleccionado.getId());
+                                        startActivity(intento);
+
+                                        break;
+                                    case 2:
+                                        // Eliminar
+                                        articuloSeleccionado.eliminar(ActivityListaProductos.this);
+                                        miAdaptador.remove(articuloSeleccionado);
+                                        miAdaptador.notifyDataSetChanged();
+                                        break;
+                                    case 3:
+                                        // Cancelar
+                                        // Cierro el alertdialog
+                                        dialog.dismiss();
+                                        break;
+                                }
+                            }
+                        });
+                builder.show();
+            }
+        });
     }
 }
 
