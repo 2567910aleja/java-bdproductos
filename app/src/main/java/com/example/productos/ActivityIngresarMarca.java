@@ -65,29 +65,42 @@ public class ActivityIngresarMarca extends AppCompatActivity {
                 String nombreV=nombre.getText().toString();
                 String descV=desc.getText().toString();
 
-                //verificamos la accion
-                Intent intentoValores = getIntent();
-                String accion = intentoValores.getStringExtra("accion");
-                Marcas marcaobj;
-                if (accion.equals("modificar")){
-                    int idMarca=intentoValores.getIntExtra("idMarca",0);
-                    marcaobj = new Marcas(ActivityIngresarMarca.this,idMarca);
+                // validacion de que los campos no esten vacios
+
+                if (nombreV.isEmpty() || descV.isEmpty()){
+                    if (nombreV.isEmpty()){
+                        nombre.setError("Debe ingresar un nombre");
+                    }
+                    if (descV.isEmpty()){
+                        desc.setError("Debe ingresar una descripcion");
+                    }
                 }else{
-                    // Creo un objeto de tipo marca
-                    marcaobj=new Marcas();
+                    //verificamos la accion
+                    Intent intentoValores = getIntent();
+                    String accion = intentoValores.getStringExtra("accion");
+                    Marcas marcaobj;
+                    if (accion.equals("modificar")){
+                        int idMarca=intentoValores.getIntExtra("idMarca",0);
+                        marcaobj = new Marcas(ActivityIngresarMarca.this,idMarca);
+                    }else{
+                        // Creo un objeto de tipo marca
+                        marcaobj=new Marcas();
+                    }
+
+                    marcaobj.setDescripcion(descV);
+                    marcaobj.setNombre(nombreV);
+                    if (accion.equals("modificar")){
+                        marcaobj.modificar(ActivityIngresarMarca.this);
+                        Toast.makeText(ActivityIngresarMarca.this, "SE MODIFICÓ LA MARCA: "+nombreV, Toast.LENGTH_SHORT).show();
+                    }else{
+                        marcaobj.crearMarca(ActivityIngresarMarca.this);
+                        Toast.makeText(ActivityIngresarMarca.this, "SE CREO LA MARCA: "+nombreV, Toast.LENGTH_SHORT).show();
+                    }
+                    Intent intento = new Intent(ActivityIngresarMarca.this, ActivityListaMarcas.class);
+                    startActivity(intento);
                 }
 
-                marcaobj.setDescripcion(descV);
-                marcaobj.setNombre(nombreV);
-                if (accion.equals("modificar")){
-                    marcaobj.modificar(ActivityIngresarMarca.this);
-                    Toast.makeText(ActivityIngresarMarca.this, "SE MODIFICÓ LA MARCA: "+nombreV, Toast.LENGTH_SHORT).show();
-                }else{
-                marcaobj.crearMarca(ActivityIngresarMarca.this);
-                    Toast.makeText(ActivityIngresarMarca.this, "SE CREO LA MARCA: "+nombreV, Toast.LENGTH_SHORT).show();
-                }
-                Intent intento = new Intent(ActivityIngresarMarca.this, ActivityListaMarcas.class);
-                startActivity(intento);
+
             }
         });
     }

@@ -40,9 +40,21 @@ public class ActivityAgregarProducto extends AppCompatActivity {
         titulo=findViewById(R.id.tituloPro);
 
         List<Marcas> listaMarcas = Marcas.listarMArcasObj(this,null,null);
+        Marcas marcaVacia=new Marcas();
+        marcaVacia.setNombre("Seleccione");
+        listaMarcas.add(marcaVacia);
 
         ArrayAdapter<Marcas> adapterMarcas = new ArrayAdapter<Marcas>(this,android.R.layout.simple_list_item_1,listaMarcas);
+
+        int posicionMarcaV=0;
+        for (int i =0;i<adapterMarcas.getCount();i++){
+            if (adapterMarcas.getItem(i).getNombre().equals(marcaVacia.getNombre())){
+                posicionMarcaV=i;
+                break;
+            }
+        }
         listMarca.setAdapter(adapterMarcas);
+        listMarca.setSelection(posicionMarcaV);
 
         //intento
         Intent intentoValores=getIntent();
@@ -72,29 +84,44 @@ public class ActivityAgregarProducto extends AppCompatActivity {
                 String nombrePro=nombreP.getText().toString();
                 String precioPro=precio.getText().toString();
                 Marcas marca=(Marcas) listMarca.getSelectedItem();
-
-                String accion=intentoValores.getStringExtra("accion");
-                Articulos articulo;
-                if (accion.equals("agregar")){
-                articulo=new Articulos();
+                //validar de que no este vacio
+                if (nombrePro.isEmpty() || precioPro.isEmpty() || marca.getNombre().equals("Seleccione")){
+                    if (nombrePro.isEmpty()){
+                        nombreP.setError("Debe ingresar un nombre");
+                    }
+                    if (precioPro.isEmpty()){
+                        precio.setError("Debe ingresar un precio");
+                    }
+                    if (marca.getNombre().equals("Seleccione")){
+                        Toast.makeText(ActivityAgregarProducto.this, "Debe seleccionar una marca", Toast.LENGTH_SHORT).show();
+                    }
                 }else{
-                    int idArti=intentoValores.getIntExtra("idProdu",0);
-                    articulo=new Articulos(ActivityAgregarProducto.this,idArti);
-                }
-                articulo.setNombre(nombrePro);
-                articulo.setPrecio(Double.parseDouble(precioPro));
-                articulo.setIdMarca(marca.getId());
-                if (accion.equals("agregar")){
-                    articulo.crearArti(ActivityAgregarProducto.this);
-                    Toast.makeText(ActivityAgregarProducto.this, "Producto "+articulo.getNombre()+" creado", Toast.LENGTH_SHORT).show();
-                }else{
-                    articulo.modificar(ActivityAgregarProducto.this);
-                    Toast.makeText(ActivityAgregarProducto.this, "Producto "+articulo.getNombre()+" modificado", Toast.LENGTH_SHORT).show();
+                    String accion=intentoValores.getStringExtra("accion");
+                    Articulos articulo;
+                    if (accion.equals("agregar")){
+                        articulo=new Articulos();
+                    }else{
+                        int idArti=intentoValores.getIntExtra("idProdu",0);
+                        articulo=new Articulos(ActivityAgregarProducto.this,idArti);
+                    }
+                    articulo.setNombre(nombrePro);
+                    articulo.setPrecio(Double.parseDouble(precioPro));
+                    articulo.setIdMarca(marca.getId());
+                    if (accion.equals("agregar")){
+                        articulo.crearArti(ActivityAgregarProducto.this);
+                        Toast.makeText(ActivityAgregarProducto.this, "Producto "+articulo.getNombre()+" creado", Toast.LENGTH_SHORT).show();
+                    }else{
+                        articulo.modificar(ActivityAgregarProducto.this);
+                        Toast.makeText(ActivityAgregarProducto.this, "Producto "+articulo.getNombre()+" modificado", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                    Intent intento=new Intent(ActivityAgregarProducto.this,ActivityListaProductos.class);
+                    startActivity(intento);
                 }
 
 
-                Intent intento=new Intent(ActivityAgregarProducto.this,ActivityListaProductos.class);
-                startActivity(intento);
+
             }
         });
         volverInicio.setOnClickListener(new View.OnClickListener() {

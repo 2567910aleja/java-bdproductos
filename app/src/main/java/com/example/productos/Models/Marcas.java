@@ -35,7 +35,7 @@ public class Marcas {
     }
     @Override
     public String toString(){
-        return id +" "+nombre;
+        return nombre;
     }
 
     public int getId() {
